@@ -28,7 +28,7 @@ Route::post('/register',[AuthController::class,'register']);
 
 Route::middleware('auth:api')->group(function () {
     // Route pour mettre à jour la quantité de stock d'un seul article
-    Route::patch('v1/articles/{id}', [ArticleController::class, 'updateStock']);
+    Route::patch('v1/articles/stock/{id}', [ArticleController::class, 'updateStock']);
     // Lister tous les articles
     Route::get('v1/articles', [ArticleController::class, 'index']);
 
@@ -45,7 +45,7 @@ Route::middleware('auth:api')->group(function () {
   Route::post('/v1/articles/libelle', [ArticleController::class, 'showByLibelle']);
 
     // Route pour mettre à jour la quantité de stock de plusieurs articles
-    Route::post('v1/articles/stock', [ArticleController::class, 'updateMultipleStocks']);
+    Route::post('v1/articles/multiplestock', [ArticleController::class, 'updateMultipleStocks']);
 
 
     //Utilisateur
@@ -68,8 +68,10 @@ Route::middleware('auth:api')->group(function () {
     Route::post('/v1/clients', [ClientController::class, 'store']);
     Route::get('/v1/clients', [ClientController::class, 'index']);
     Route::get('/clients', [ClientController::class, 'indexWithAccounts'])->where('comptes', 'oui|non');
-    Route::get('/clients', [ClientController::class, 'indexActiveStatus'])->where('active', 'oui|non');
+    Route::get('/clients/ActiveStatus', [ClientController::class, 'indexActiveStatus'])->where('active', 'oui|non');
     Route::post('/clients/telephone', [ClientController::class, 'searchByTelephone']);
+    Route::Get('/v1/clients/{id}/dettes', [ClientController::class, 'listDettes']);
+    Route::Get('/v1/clients/{id}/user', [ClientController::class, 'ShowUser']);
 
 
 

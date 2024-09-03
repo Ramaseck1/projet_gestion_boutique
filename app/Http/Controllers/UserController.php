@@ -6,8 +6,12 @@ use Illuminate\Http\Request;
 use App\Models\User;
 use Illuminate\Support\Facades\Validator;
 
+
 /**
- * @OA\Info(title="API de gestion des utilisateurs", version="1.0")
+ * @OA\Tag(
+ *     name="Article",
+ *     description="Les opérations liées aux articles"
+ * )
  */
 class UserController extends Controller
 {
@@ -213,6 +217,39 @@ class UserController extends Controller
     }
 
 
+    /**
+     * @OA\Post(
+     *     path="/api/users/{id}/deactivate", 
+     *     tags={"Users"},
+     *     summary="Deactivate a user account",
+     *     operationId="deactivateUser",
+     *     @OA\Parameter(
+     *         name="id",
+     *         in="path",
+     *         description="ID of the user to deactivate",
+     *         required=true,
+     *         @OA\Schema(type="integer")
+     *     ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="User deactivated successfully",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="status", type="integer", example=200),
+     *             @OA\Property(property="data", ref="#/components/schemas/User"),
+     *             @OA\Property(property="message", type="string", example="Utilisateur désactivé avec succès")
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=404,
+     *         description="User not found",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="status", type="integer", example=404),
+     *             @OA\Property(property="data", type="null"),
+     *             @OA\Property(property="message", type="string", example="Utilisateur non trouvé")
+     *         )
+     *     )
+     * )
+     */
 
     //desactiver compte
     public function deactivate($id)

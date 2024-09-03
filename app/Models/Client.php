@@ -10,12 +10,18 @@ class Client extends Model
     use HasFactory;
     protected $fillable = [
         'surname', 
-/*         'telephone',
- */         'address',
+        'telephone',
+        'address',
          'user_id'
         ];
     
+        public function dettes()
+        {
+            return $this->hasMany(Dette::class);
+        }
         public function user() {
             return $this->belongsTo(User::class);
         }
+
+      
 }

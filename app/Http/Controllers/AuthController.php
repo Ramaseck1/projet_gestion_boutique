@@ -7,21 +7,14 @@ use Illuminate\Support\Facades\Validator;
 use App\Models\User;
 use App\Models\Client;
 use Illuminate\Support\Facades\Auth;
+use App\Services\Auth\AuthenticationServiceInterface;
 
 
 
 /**
- * @OA\Info(
- *     title="My API Documentation",
- *     version="1.0.0",
- *     description="This is the API documentation for my Laravel application.",
- *     @OA\Contact(
- *         email="support@example.com"
- *     ),
- *     @OA\License(
- *         name="Apache 2.0",
- *         url="http://www.apache.org/licenses/LICENSE-2.0.html"
- *     )
+ * @OA\Tag(
+ *     name="Article",
+ *     description="Les opérations liées aux articles"
  * )
  */
 
@@ -40,6 +33,14 @@ use Illuminate\Support\Facades\Auth;
  */
 class AuthController extends Controller
 {
+
+    protected $authService;
+
+    public function __construct(AuthenticationServiceInterface $authService)
+    {
+        $this->authService = $authService;
+    }
+
 
         /**
      * @OA\Post(
@@ -178,7 +179,7 @@ class AuthController extends Controller
  *             @OA\Schema(
  *                 type="object",
  *                 required={"login", "password"},
- *                 @OA\Property(property="login", type="string", example="ramasecksd"),
+ *                 @OA\Property(property="login", type="string", example="Ramasec"),
  *                 @OA\Property(property="password", type="string", example="Passer@123")
  *             )
  *         )
@@ -209,47 +210,30 @@ class AuthController extends Controller
  * )
  */
 
-    public function login(Request $request){
-        // Validation
-        $validator = Validator::make($request->all(),[
-            'login' => ['required','string','max:255'],
-            'password' => ['required','string','min:5'],
-        ]); 
-        if ($validator->fails()) {
-        return response()->json([
-            'status' => 400,
-            'data' => $validator->errors(),
-            'message' => 'Erreur de validation',
-        ], 400);
-    }
+ public function login(Request $request)
+ {
+     // Validation
+     $validator = Validator::make($request->all(), [
+         'login' => ['required', 'string', 'max:255'],
+         'password' => ['required', 'string', 'min:5'],
+     ]);
 
-        if($validator->fails()){
-            return response()->json([
-               'status'=> 400,
-                'data' => $validator->errors(),
-                'message' => 'Erreur de validation',
-                ], 400);
-        }
-        $credentials = $request->only('login','password');
+     if ($validator->fails()) {
+         return response()->json([
+             'status' => 400,
+             'data' => $validator->errors(),
+             'message' => 'Erreur de validation',
+         ], 400);
+     }
 
-        if(!Auth::attempt($credentials)){
-            return response()->json([
-               'status'=> 401,
-                'data' => null,
-               'message' => 'Identifiants incorrects',
-                ], 401);
-        }
-        $user = Auth::user();
-        $tokenResult = $user->createToken('Personal Access Token')->accessToken;
+     $credentials = $request->only('login', 'password');
 
-        return response()->json([
-           'status'=> 200,
-            'data' => ['token' => $tokenResult],
-            'message' => 'Connexion réussie',
-        ],200);
-    
+     return $this->authService->authenticate($credentials);
+ }
 
-    }
-
+ public function logout()
+ {
+     return $this->authService->logout();
+ }
 
 }

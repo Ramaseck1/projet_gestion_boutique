@@ -1,10 +1,489 @@
 {
     "openapi": "3.0.0",
     "info": {
-        "title": "API de gestion des utilisateurs",
+        "title": "API de gestion des articles",
+        "description": "API pour gérer les articles et leur stock",
         "version": "1.0"
     },
     "paths": {
+        "/api/v1/articles": {
+            "get": {
+                "tags": [
+                    "Articles"
+                ],
+                "summary": "List all articles with optional filter",
+                "operationId": "listArticles",
+                "parameters": [
+                    {
+                        "name": "disponible",
+                        "in": "query",
+                        "description": "Filter articles by availability",
+                        "required": false,
+                        "schema": {
+                            "type": "string",
+                            "enum": [
+                                "oui",
+                                "non"
+                            ]
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "List of articles",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "status": {
+                                            "type": "integer",
+                                            "example": 200
+                                        },
+                                        "data": {
+                                            "type": "array",
+                                            "items": {
+                                                "$ref": "#/components/schemas/Article"
+                                            }
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Liste des articles récupérée avec succès"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "post": {
+                "tags": [
+                    "Articles"
+                ],
+                "summary": "Create a new article",
+                "operationId": "createArticle",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "libelle",
+                                    "prix",
+                                    "qteStock"
+                                ],
+                                "properties": {
+                                    "libelle": {
+                                        "type": "string",
+                                        "example": "Article Example"
+                                    },
+                                    "prix": {
+                                        "type": "number",
+                                        "format": "float",
+                                        "example": 19.99
+                                    },
+                                    "qteStock": {
+                                        "type": "integer",
+                                        "example": 10
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Article created successfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "status": {
+                                            "type": "integer",
+                                            "example": 201
+                                        },
+                                        "data": {
+                                            "$ref": "#/components/schemas/Article"
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Article enregistré avec succès"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "411": {
+                        "description": "Validation error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "status": {
+                                            "type": "integer",
+                                            "example": 411
+                                        },
+                                        "data": {
+                                            "properties": {
+                                                "errors": {
+                                                    "type": "object",
+                                                    "additionalProperties": true
+                                                }
+                                            },
+                                            "type": "object"
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Erreur de validation"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/articles/{id}": {
+            "get": {
+                "tags": [
+                    "Articles"
+                ],
+                "summary": "Get an article by ID",
+                "operationId": "getArticleById",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "ID of the article to retrieve",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Article found",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "status": {
+                                            "type": "integer",
+                                            "example": 200
+                                        },
+                                        "data": {
+                                            "$ref": "#/components/schemas/Article"
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Article trouvé"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "411": {
+                        "description": "Article not found",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "status": {
+                                            "type": "integer",
+                                            "example": 411
+                                        },
+                                        "data": {
+                                            "type": "null"
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Objet non trouvé"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/articles/libelle": {
+            "post": {
+                "tags": [
+                    "Articles"
+                ],
+                "summary": "Get an article by libelle",
+                "operationId": "getArticleByLibelle",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "libelle"
+                                ],
+                                "properties": {
+                                    "libelle": {
+                                        "type": "string",
+                                        "example": "Article Example"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Article found",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "status": {
+                                            "type": "integer",
+                                            "example": 200
+                                        },
+                                        "data": {
+                                            "$ref": "#/components/schemas/Article"
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Article trouvé"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "411": {
+                        "description": "Article not found",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "status": {
+                                            "type": "integer",
+                                            "example": 411
+                                        },
+                                        "data": {
+                                            "type": "null"
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Objet non trouvé"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/articles/stock/{id}": {
+            "patch": {
+                "tags": [
+                    "Articles"
+                ],
+                "summary": "Update stock quantity of an article",
+                "operationId": "updateArticleStock",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "ID of the article to update",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "qteStock"
+                                ],
+                                "properties": {
+                                    "qteStock": {
+                                        "type": "number",
+                                        "format": "float",
+                                        "example": 15
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Stock quantity updated successfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "status": {
+                                            "type": "integer",
+                                            "example": 200
+                                        },
+                                        "data": {
+                                            "$ref": "#/components/schemas/Article"
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Quantité en stock mise à jour"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "403": {
+                        "description": "Unauthorized access",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "status": {
+                                            "type": "integer",
+                                            "example": 403
+                                        },
+                                        "data": {
+                                            "type": "null"
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Vous n'avez pas les autorisations nécessaires pour ajouter un article"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "411": {
+                        "description": "Article not found",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "status": {
+                                            "type": "integer",
+                                            "example": 411
+                                        },
+                                        "data": {
+                                            "type": "null"
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Objet non trouvé"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/articles/multiplestock": {
+            "patch": {
+                "tags": [
+                    "Articles"
+                ],
+                "summary": "Mettre à jour les stocks de plusieurs articles",
+                "description": "Met à jour les quantités en stock de plusieurs articles à la fois.",
+                "operationId": "4de15c0c284446c8bffd9cb9d49872e8",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "articles"
+                                ],
+                                "properties": {
+                                    "articles": {
+                                        "type": "array",
+                                        "items": {
+                                            "properties": {
+                                                "id": {
+                                                    "type": "integer",
+                                                    "example": 1
+                                                },
+                                                "qteStock": {
+                                                    "type": "integer",
+                                                    "example": 100
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Quantités en stock mises à jour",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "status": {
+                                            "type": "integer",
+                                            "example": 200
+                                        },
+                                        "data": {
+                                            "properties": {
+                                                "success": {
+                                                    "type": "array",
+                                                    "items": {
+                                                        "$ref": "#/components/schemas/Article"
+                                                    }
+                                                },
+                                                "error": {
+                                                    "type": "array",
+                                                    "items": {
+                                                        "type": "integer"
+                                                    }
+                                                }
+                                            },
+                                            "type": "object"
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Quantités en stock mises à jour"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
         "/api/register": {
             "post": {
                 "tags": [
@@ -129,7 +608,7 @@
                                 "properties": {
                                     "login": {
                                         "type": "string",
-                                        "example": "ramasecksd"
+                                        "example": "Ramasec"
                                     },
                                     "password": {
                                         "type": "string",
@@ -187,6 +666,565 @@
                                         "message": {
                                             "type": "string",
                                             "example": "Identifiants incorrects"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/apiv1/clients": {
+            "get": {
+                "tags": [
+                    "Client"
+                ],
+                "summary": "Récupère la liste de tous les clients",
+                "operationId": "5a2023c1d79734979bf087a127922922",
+                "responses": {
+                    "200": {
+                        "description": "Liste des clients",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "status": {
+                                            "type": "integer",
+                                            "example": 200
+                                        },
+                                        "data": {
+                                            "type": "array",
+                                            "items": {
+                                                "$ref": "#/components/schemas/Client"
+                                            }
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Liste des clients"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Aucun client trouvé",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "status": {
+                                            "type": "integer",
+                                            "example": 404
+                                        },
+                                        "data": {
+                                            "type": "null"
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Pas de clients"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/clients": {
+            "get": {
+                "tags": [
+                    "Client"
+                ],
+                "summary": "Récupère la liste des clients avec ou sans comptes",
+                "operationId": "9fbaa4228c73b1ac004a423578684f7d",
+                "parameters": [
+                    {
+                        "name": "comptes",
+                        "in": "query",
+                        "description": "Filtrer les clients par comptes. Utiliser 'oui' pour les clients avec comptes, 'non' pour sans comptes",
+                        "required": false,
+                        "schema": {
+                            "type": "string",
+                            "enum": [
+                                "oui",
+                                "non"
+                            ]
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Liste des clients",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "status": {
+                                            "type": "integer",
+                                            "example": 200
+                                        },
+                                        "data": {
+                                            "type": "array",
+                                            "items": {
+                                                "$ref": "#/components/schemas/Client"
+                                            }
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Liste des clients"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Paramètre invalide",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "status": {
+                                            "type": "integer",
+                                            "example": 400
+                                        },
+                                        "data": {
+                                            "type": "null"
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Paramètre invalide"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/clients/ActiveStatus": {
+            "get": {
+                "tags": [
+                    "Client"
+                ],
+                "summary": "Récupère la liste des clients en fonction du statut actif de leur compte",
+                "operationId": "ffbd10691187b35689d1379af1eabfff",
+                "parameters": [
+                    {
+                        "name": "active",
+                        "in": "query",
+                        "description": "Filtrer les clients par statut actif du compte. Utiliser 'oui' pour les clients actifs, 'non' pour inactifs",
+                        "required": false,
+                        "schema": {
+                            "type": "string",
+                            "enum": [
+                                "oui",
+                                "non"
+                            ]
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Liste des clients",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "status": {
+                                            "type": "integer",
+                                            "example": 200
+                                        },
+                                        "data": {
+                                            "type": "array",
+                                            "items": {
+                                                "$ref": "#/components/schemas/Client"
+                                            }
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Liste des clients"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Paramètre invalide",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "status": {
+                                            "type": "integer",
+                                            "example": 400
+                                        },
+                                        "data": {
+                                            "type": "null"
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Paramètre invalide"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/clients/telephone": {
+            "post": {
+                "tags": [
+                    "Client"
+                ],
+                "summary": "Recherche un client par numéro de téléphone",
+                "operationId": "825d7e44cc3b3114e7d9768f6996d7f4",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "properties": {
+                                    "telephone": {
+                                        "type": "string",
+                                        "example": "0612345678"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Client trouvé ou non",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "status": {
+                                            "type": "integer",
+                                            "example": 200
+                                        },
+                                        "data": {
+                                            "$ref": "#/components/schemas/Client"
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Client trouvé"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "411": {
+                        "description": "Erreur de validation",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "status": {
+                                            "type": "integer",
+                                            "example": 411
+                                        },
+                                        "data": {
+                                            "type": "object"
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Erreur de validation"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/clients": {
+            "post": {
+                "tags": [
+                    "Client"
+                ],
+                "summary": "Crée un nouveau client",
+                "operationId": "72a51329a9c85d73e15e640b5b53e470",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "properties": {
+                                    "surname": {
+                                        "type": "string",
+                                        "example": "Dupont"
+                                    },
+                                    "adresse": {
+                                        "type": "string",
+                                        "example": "123 Rue Example"
+                                    },
+                                    "telephone": {
+                                        "type": "string",
+                                        "example": "0612345678"
+                                    },
+                                    "user": {
+                                        "properties": {
+                                            "login": {
+                                                "type": "string",
+                                                "example": "client_login"
+                                            },
+                                            "password": {
+                                                "type": "string",
+                                                "example": "Password123!"
+                                            }
+                                        },
+                                        "type": "object"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Client enregistré avec succès",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "status": {
+                                            "type": "integer",
+                                            "example": 201
+                                        },
+                                        "data": {
+                                            "$ref": "#/components/schemas/Client"
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Client enregistré avec succès"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "403": {
+                        "description": "Accès refusé",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "status": {
+                                            "type": "integer",
+                                            "example": 403
+                                        },
+                                        "data": {
+                                            "type": "null"
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Vous n'avez pas les autorisations nécessaires pour ajouter un client"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "411": {
+                        "description": "Erreur de validation",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "status": {
+                                            "type": "integer",
+                                            "example": 411
+                                        },
+                                        "data": {
+                                            "type": "object"
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Erreur de validation"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/clients/{id}": {
+            "get": {
+                "tags": [
+                    "Client"
+                ],
+                "summary": "Affiche les détails d'un client spécifique",
+                "operationId": "0a628c8462ccec3d2798255b1015c22c",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "ID du client",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Client trouvé",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "status": {
+                                            "type": "integer",
+                                            "example": 200
+                                        },
+                                        "data": {
+                                            "$ref": "#/components/schemas/Client"
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Client trouvé"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Client non trouvé",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "status": {
+                                            "type": "integer",
+                                            "example": 404
+                                        },
+                                        "data": {
+                                            "type": "null"
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Client non trouvé"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/clients/{id}/user": {
+            "get": {
+                "tags": [
+                    "User"
+                ],
+                "summary": "Récupère les détails d'un utilisateur spécifique",
+                "operationId": "bd2cecfcf6079d9de9b5b5994b2e4a67",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "ID de l'utilisateur",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Utilisateur trouvé",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "status": {
+                                            "type": "integer",
+                                            "example": 200
+                                        },
+                                        "data": {
+                                            "$ref": "#/components/schemas/User"
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Utilisateur trouvé"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Utilisateur non trouvé",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "status": {
+                                            "type": "integer",
+                                            "example": 404
+                                        },
+                                        "data": {
+                                            "type": "null"
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Utilisateur non trouvé"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Erreur serveur",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "status": {
+                                            "type": "integer",
+                                            "example": 500
+                                        },
+                                        "data": {
+                                            "type": "null"
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Erreur serveur"
                                         }
                                     },
                                     "type": "object"
@@ -430,10 +1468,116 @@
                     }
                 }
             }
+        },
+        "/api/users/{id}/deactivate": {
+            "post": {
+                "tags": [
+                    "Users"
+                ],
+                "summary": "Deactivate a user account",
+                "operationId": "deactivateUser",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "ID of the user to deactivate",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "User deactivated successfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "status": {
+                                            "type": "integer",
+                                            "example": 200
+                                        },
+                                        "data": {
+                                            "$ref": "#/components/schemas/User"
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Utilisateur désactivé avec succès"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "User not found",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "status": {
+                                            "type": "integer",
+                                            "example": 404
+                                        },
+                                        "data": {
+                                            "type": "null"
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Utilisateur non trouvé"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
         }
     },
     "components": {
         "schemas": {
+            "Article": {
+                "required": [
+                    "id",
+                    "libelle",
+                    "prix",
+                    "qteStock"
+                ],
+                "properties": {
+                    "id": {
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "libelle": {
+                        "type": "string",
+                        "example": "Article Example"
+                    },
+                    "prix": {
+                        "type": "number",
+                        "format": "float",
+                        "example": 19.99
+                    },
+                    "qteStock": {
+                        "type": "integer",
+                        "example": 10
+                    },
+                    "created_at": {
+                        "type": "string",
+                        "format": "date-time",
+                        "example": "2024-01-01T00:00:00Z"
+                    },
+                    "updated_at": {
+                        "type": "string",
+                        "format": "date-time",
+                        "example": "2024-01-01T00:00:00Z"
+                    }
+                },
+                "type": "object"
+            },
             "User": {
                 "required": [
                     "id",
@@ -470,6 +1614,75 @@
                     }
                 },
                 "type": "object"
+            },
+            "Client": {
+                "title": "Client",
+                "description": "Client schema",
+                "properties": {
+                    "id": {
+                        "description": "ID du client",
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "surname": {
+                        "description": "Nom de famille du client",
+                        "type": "string",
+                        "example": "Dupont"
+                    },
+                    "adresse": {
+                        "description": "Adresse du client",
+                        "type": "string",
+                        "example": "123 Rue Example"
+                    },
+                    "telephone": {
+                        "description": "Numéro de téléphone du client",
+                        "type": "string",
+                        "example": "0612345678"
+                    },
+                    "user": {
+                        "description": "Informations de l'utilisateur associé",
+                        "properties": {
+                            "login": {
+                                "type": "string",
+                                "example": "client_login"
+                            },
+                            "password": {
+                                "type": "string",
+                                "example": "Password123!"
+                            }
+                        },
+                        "type": "object"
+                    }
+                },
+                "type": "object"
+            },
+            "Dette": {
+                "required": [
+                    "id",
+                    "montant",
+                    "date"
+                ],
+                "properties": {
+                    "id": {
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "montant": {
+                        "type": "number",
+                        "format": "float",
+                        "example": 100.5
+                    },
+                    "date": {
+                        "type": "string",
+                        "format": "date",
+                        "example": "2024-09-01"
+                    },
+                    "description": {
+                        "type": "string",
+                        "example": "Une dette pour achat matériel"
+                    }
+                },
+                "type": "object"
             }
         },
         "securitySchemes": {
@@ -483,8 +1696,20 @@
     },
     "tags": [
         {
+            "name": "Articles",
+            "description": "Articles"
+        },
+        {
             "name": "Auth",
             "description": "Auth"
+        },
+        {
+            "name": "Client",
+            "description": "Client"
+        },
+        {
+            "name": "User",
+            "description": "User"
         },
         {
             "name": "Users",
