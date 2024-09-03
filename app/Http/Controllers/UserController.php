@@ -7,56 +7,11 @@ use App\Models\User;
 use Illuminate\Support\Facades\Validator;
 
 
-/**
- * @OA\Tag(
- *     name="Article",
- *     description="Les opérations liées aux articles"
- * )
- */
+
 class UserController extends Controller
 {
   
-/**
-     * @OA\Get(
-     *     path="/api/v1/users",
-     *     tags={"Users"},
-     *     summary="List all users with optional filters",
-     *     operationId="listUsers",
-     *     @OA\Parameter(
-     *         name="role",
-     *         in="query",
-     *         description="Filter users by role",
-     *         required=false,
-     *         @OA\Schema(type="string", enum={"1", "2"})
-     *     ),
-     *     @OA\Parameter(
-     *         name="active",
-     *         in="query",
-     *         description="Filter users by active status",
-     *         required=false,
-     *         @OA\Schema(type="string", enum={"oui", "non"})
-     *     ),
-     *     @OA\Response(
-     *         response=200,
-     *         description="List of users",
-     *         @OA\JsonContent(
-     *             @OA\Property(property="status", type="integer", example=200),
-     *             @OA\Property(property="data", type="array", @OA\Items(ref="#/components/schemas/User")),
-     *             @OA\Property(property="message", type="string", example="Liste des utilisateurs")
-     *         )
-     *     ),
-     *     @OA\Response(
-     *         response=404,
-     *         description="No users found",
-     *         @OA\JsonContent(
-     *             @OA\Property(property="status", type="integer", example=404),
-     *             @OA\Property(property="data", type="null"),
-     *             @OA\Property(property="message", type="string", example="Aucun utilisateur trouvé")
-     *         )
-     *     )
-     * )
-     */
-     
+
     public function index(Request $request)
     {
         $query = User::query();
@@ -81,23 +36,7 @@ class UserController extends Controller
 
 
 
-    /**
-     * @OA\Get(
-     *     path="/api/v1/liste",
-     *     tags={"Users"},
-     *     summary="List all users",
-     *     operationId="listAllUsers",
-     *     @OA\Response(
-     *         response=200,
-     *         description="List of all users",
-     *         @OA\JsonContent(
-     *             @OA\Property(property="status", type="integer", example=200),
-     *             @OA\Property(property="data", type="array", @OA\Items(ref="#/components/schemas/User")),
-     *             @OA\Property(property="message", type="string", example="Liste des utilisateurs")
-     *         )
-     *     )
-     * )
-     */
+ 
     public function liste(){
         $users = User::all();
         return response()->json([
@@ -106,50 +45,6 @@ class UserController extends Controller
             'message' => 'Liste des utilisateurs',
         ], 200);
     }
-
-/**
-     * @OA\Post(
-     *     path="/api/v1/users",
-     *     tags={"Users"},
-     *     summary="Create a new user",
-     *     operationId="createUser",
-     *     @OA\RequestBody(
-     *         required=true,
-     *         @OA\MediaType(
-     *             mediaType="application/json",
-     *             @OA\Schema(
-     *                 type="object",
-     *                 required={"nom", "prenom", "login", "password", "role_id"},
-     *                 @OA\Property(property="nom", type="string", example="John"),
-     *                 @OA\Property(property="prenom", type="string", example="Doe"),
-     *                 @OA\Property(property="login", type="string", example="user@example.com"),
-     *                 @OA\Property(property="password", type="string", example="Password123!"),
-     *                 @OA\Property(property="role_id", type="string", example="1"),
-     *                 @OA\Property(property="photo", type="string", format="binary")
-     *             )
-     *         )
-     *     ),
-     *     @OA\Response(
-     *         response=200,
-     *         description="User created successfully",
-     *         @OA\JsonContent(
-     *             @OA\Property(property="status", type="integer", example=200),
-     *             @OA\Property(property="data", type="object", @OA\Property(property="user", ref="#/components/schemas/User")),
-     *             @OA\Property(property="message", type="string", example="Utilisateur créé avec succès")
-     *         )
-     *     ),
-     *     @OA\Response(
-     *         response=400,
-     *         description="Validation error",
-     *         @OA\JsonContent(
-     *             @OA\Property(property="status", type="integer", example=400),
-     *             @OA\Property(property="data", type="object", @OA\Property(property="errors", type="object", additionalProperties=true)),
-     *             @OA\Property(property="message", type="string", example="Erreur de validation")
-     *         )
-     *     )
-     * )
-     */
-    
 
     public function store(Request $request)
     {
@@ -217,39 +112,7 @@ class UserController extends Controller
     }
 
 
-    /**
-     * @OA\Post(
-     *     path="/api/users/{id}/deactivate", 
-     *     tags={"Users"},
-     *     summary="Deactivate a user account",
-     *     operationId="deactivateUser",
-     *     @OA\Parameter(
-     *         name="id",
-     *         in="path",
-     *         description="ID of the user to deactivate",
-     *         required=true,
-     *         @OA\Schema(type="integer")
-     *     ),
-     *     @OA\Response(
-     *         response=200,
-     *         description="User deactivated successfully",
-     *         @OA\JsonContent(
-     *             @OA\Property(property="status", type="integer", example=200),
-     *             @OA\Property(property="data", ref="#/components/schemas/User"),
-     *             @OA\Property(property="message", type="string", example="Utilisateur désactivé avec succès")
-     *         )
-     *     ),
-     *     @OA\Response(
-     *         response=404,
-     *         description="User not found",
-     *         @OA\JsonContent(
-     *             @OA\Property(property="status", type="integer", example=404),
-     *             @OA\Property(property="data", type="null"),
-     *             @OA\Property(property="message", type="string", example="Utilisateur non trouvé")
-     *         )
-     *     )
-     * )
-     */
+     
 
     //desactiver compte
     public function deactivate($id)

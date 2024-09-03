@@ -27,6 +27,7 @@ Route::post('/register',[AuthController::class,'register']);
 
 
 Route::middleware('auth:api')->group(function () {
+  Route::post('/logout',[AuthController::class,'logout']);
     // Route pour mettre à jour la quantité de stock d'un seul article
     Route::patch('v1/articles/stock/{id}', [ArticleController::class, 'updateStock']);
     // Lister tous les articles
@@ -65,7 +66,7 @@ Route::middleware('auth:api')->group(function () {
 
 
     //client
-    Route::post('/v1/clients', [ClientController::class, 'store']);
+    Route::post('/v1/client', [ClientController::class, 'store']);
     Route::get('/v1/clients', [ClientController::class, 'index']);
     Route::get('/clients', [ClientController::class, 'indexWithAccounts'])->where('comptes', 'oui|non');
     Route::get('/clients/ActiveStatus', [ClientController::class, 'indexActiveStatus'])->where('active', 'oui|non');

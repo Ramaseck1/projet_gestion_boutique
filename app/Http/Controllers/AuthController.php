@@ -10,27 +10,6 @@ use Illuminate\Support\Facades\Auth;
 use App\Services\Auth\AuthenticationServiceInterface;
 
 
-
-/**
- * @OA\Tag(
- *     name="Article",
- *     description="Les opérations liées aux articles"
- * )
- */
-
-/**
- * @OA\Schema(
- *     schema="User",
- *     type="object",
- *     required={"id", "nom", "prenom", "photo", "login", "role_id"},
- *     @OA\Property(property="id", type="integer", example=1),
- *     @OA\Property(property="nom", type="string", example="John"),
- *     @OA\Property(property="prenom", type="string", example="Doe"),
- *     @OA\Property(property="photo", type="string", example="photos/photo.jpg"),
- *     @OA\Property(property="login", type="string", example="user@example.com"),
- *     @OA\Property(property="role_id", type="integer", example=1)
- * )
- */
 class AuthController extends Controller
 {
 
@@ -42,68 +21,13 @@ class AuthController extends Controller
     }
 
 
-        /**
-     * @OA\Post(
-     *     path="/api/register",
-     *     tags={"Auth"},
-     *     summary="Register a new user",
-     *     operationId="registerUser",
-     *     @OA\RequestBody(
-     *         required=true,
-     *         @OA\MediaType(
-     *             mediaType="application/json",
-     *             @OA\Schema(
-     *                 type="object",
-     *                 required={"nom", "prenom", "photo", "login", "password"},
-     *                 @OA\Property(property="nom", type="string", example="John"),
-     *                 @OA\Property(property="prenom", type="string", example="Doe"),
-     *                 @OA\Property(property="photo", type="string", example="photos/photo.jpg"),
-     *                 @OA\Property(property="login", type="string", example="user@example.com"),
-     *                 @OA\Property(property="password", type="string", example="password")
-     *             )
-     *         )
-     *     ),
-     *     @OA\Response(
-     *         response=201,
-     *         description="User registered successfully",
-     *         @OA\JsonContent(
-     *             @OA\Property(property="status", type="integer", example=201),
-     *             @OA\Property(
-     *                 property="data",
-     *                 type="object",
-     *                 @OA\Property(property="user", ref="#/components/schemas/User"),
-     *                 @OA\Property(property="token", type="string", example="your-jwt-token")
-     *             ),
-     *             @OA\Property(property="message", type="string", example="User Registered Successfully")
-     *         )
-     *     ),
-     *     @OA\Response(
-     *         response=400,
-     *         description="Validation Error",
-     *         @OA\JsonContent(
-     *             @OA\Property(property="status", type="integer", example=400),
-     *             @OA\Property(property="data", type="null"),
-     *             @OA\Property(property="message", type="string", example="Validation Error")
-     *         )
-     *     )
-     * )
-     */
+   
 
     public function register(Request $request)
 {
 
 
-  /*   // Vérifie si l'utilisateur est authentifié
-        $authUser = Auth::user();
-        // Vérifie si l'utilisateur authentifié est un boutiquier
-        if ($authUser->role_id !== 'boutiquier') {
-            return response()->json([
-                'status' => 403,
-                'data' => null,
-                'message' => 'Vous n\'avez pas les autorisations nécessaires pour créer un client',
-            ], 403);
-        } */
-    // Validation
+ 
     $validator = Validator::make($request->all(), [
         'nom' => ['required', 'string', 'max:255'],
         'prenom' => ['required', 'string', 'max:255'],
@@ -126,19 +50,7 @@ class AuthController extends Controller
         ], 400);
     }
 
-      // Check if the role is 'boutiquier' and the user is pre-registered
-   /*    if ($request->role_id == 'boutiquier') {
-        $existingUser = User::where('login', $request->login)->where('role_id', 'boutiquier')->first();
-        if (!$existingUser) {
-            return response()->json([
-                'status' => 403,
-                'data' => null,
-                'message' => 'Vous n\'avez pas les autorisations nécessaires pour vous inscrire en tant que boutiquier.',
-            ], 403);
-        }
-    } */
-
-
+   
 
     // Create client
     $user = new User();
@@ -166,49 +78,6 @@ class AuthController extends Controller
 }
 
 
-/**
- * @OA\Post(
- *     path="/api/login",
- *     tags={"Auth"},
- *     summary="Authenticate a user and return a JWT token",
- *     operationId="loginUser",
- *     @OA\RequestBody(
- *         required=true,
- *         @OA\MediaType(
- *             mediaType="application/json",
- *             @OA\Schema(
- *                 type="object",
- *                 required={"login", "password"},
- *                 @OA\Property(property="login", type="string", example="Ramasec"),
- *                 @OA\Property(property="password", type="string", example="Passer@123")
- *             )
- *         )
- *     ),
- *     @OA\Response(
- *         response=200,
- *         description="Login successful",
- *         @OA\JsonContent(
- *             @OA\Property(property="status", type="integer", example=200),
- *             @OA\Property(
- *                 property="data",
- *                 type="object",
- *                 @OA\Property(property="token", type="string", example="your-jwt-token")
- *             ),
- *             @OA\Property(property="message", type="string", example="Connexion réussie")
- *         )
- *     ),
- 
- *     @OA\Response(
- *         response=401,
- *         description="Unauthorized",
- *         @OA\JsonContent(
- *             @OA\Property(property="status", type="integer", example=401),
- *             @OA\Property(property="data", type="null"),
- *             @OA\Property(property="message", type="string", example="Identifiants incorrects")
- *         )
- *     )
- * )
- */
 
  public function login(Request $request)
  {
