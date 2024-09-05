@@ -997,6 +997,11 @@
                                             "password": {
                                                 "type": "string",
                                                 "example": "Password123!"
+                                            },
+                                            "photo": {
+                                                "type": "string",
+                                                "format": "binary",  
+                                                "description": "La photo du client"
                                             }
                                         },
                                         "type": "object"

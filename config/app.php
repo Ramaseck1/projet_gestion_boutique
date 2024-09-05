@@ -169,6 +169,11 @@ return [
         App\Providers\EventServiceProvider::class,
         App\Providers\RouteServiceProvider::class,
         App\Providers\AuthCustomServiceProvider::class,
+        App\Providers\ImageServiceProvider::class,
+        //générer une carte de fidélité avec un QR code
+        SimpleSoftwareIO\QrCode\QrCodeServiceProvider::class,
+
+
         
 
     ])->toArray(),
@@ -186,6 +191,10 @@ return [
 
     'aliases' => Facade::defaultAliases()->merge([
         // 'Example' => App\Facades\Example::class,
+        'Upload' => App\Facades\UploadFacade::class,
+        'QrCode' => SimpleSoftwareIO\QrCode\Facades\QrCode::class,
+
+
     ])->toArray(),
 
 ];

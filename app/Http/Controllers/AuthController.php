@@ -2,22 +2,29 @@
 
 namespace App\Http\Controllers;
 
+use App\Services\PhotoServiceInterface;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use App\Models\User;
 use App\Models\Client;
 use Illuminate\Support\Facades\Auth;
 use App\Services\Auth\AuthenticationServiceInterface;
+use App\Facades\UploadFacade; // Utiliser la facade Upload
+
 
 
 class AuthController extends Controller
 {
 
     protected $authService;
+    protected $photoService;
 
-    public function __construct(AuthenticationServiceInterface $authService)
+
+    public function __construct(AuthenticationServiceInterface $authService, PhotoServiceInterface $photoService)
     {
         $this->authService = $authService;
+        $this->photoService = $photoService;
+
     }
 
 
@@ -39,7 +46,7 @@ class AuthController extends Controller
             'regex:/[@$!%*#?&]/'          // au moins un caractère spécial
         ],
         'role_id' => ['required', 'integer'],
-        'photo' => 'nullable|image|max:2048'  // Modifié de required à nullable
+        'photo' => 'nullable|image|max:4096'  // Limite à 4 MB
     ]);
 
     if ($validator->fails()) {
@@ -60,11 +67,18 @@ class AuthController extends Controller
     $user->role_id = $request->role_id;
     $user->password = bcrypt($request->password);
 
+     /* // Convertir et stocker la photo en base64
+     if ($request->hasFile('photo')) {
+        $base64Photo = $this->photoService->convertAndStorePhoto($request->file('photo'));
+        $user->photo = $base64Photo;
+    } */
+
     // Upload image
     if ($request->hasFile('photo')) {
-        $path = $request->file('photo')->store('photos', 'public');
+        $path = UploadFacade::uploadImage($request->file('photo'));
         $user->photo = $path;
     }
+
 
     $user->save();
 
@@ -96,6 +110,7 @@ class AuthController extends Controller
      }
 
      $credentials = $request->only('login', 'password');
+     
 
      return $this->authService->authenticate($credentials);
  }

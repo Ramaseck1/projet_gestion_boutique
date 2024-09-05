@@ -962,7 +962,7 @@
         "/api/v1/clients": {
             "post": {
                 "tags": [
-                    "Client"
+                    "Clientt"
                 ],
                 "summary": "Crée un nouveau client",
                 "operationId": "72a51329a9c85d73e15e640b5b53e470",
@@ -972,7 +972,7 @@
                         "application/json": {
                             "schema": {
                                 "properties": {
-                                    "surname": {
+                                    "surnom": {
                                         "type": "string",
                                         "example": "Dupont"
                                     },
@@ -993,8 +993,12 @@
                                             "password": {
                                                 "type": "string",
                                                 "example": "Password123!"
-                                            }
-                                        },
+                                            },
+                                            "photo": {
+                                                "type": "string",
+                                                "format": "binary",  
+                                                "description": "La photo du client"
+                                            },
                                         "type": "object"
                                     }
                                 },

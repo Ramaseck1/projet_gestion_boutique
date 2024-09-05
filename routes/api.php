@@ -26,7 +26,7 @@ Route::post('/login',[AuthController::class,'login']);
 Route::post('/register',[AuthController::class,'register']);
 
 
-Route::middleware('auth:api')->group(function () {
+Route::middleware('json.response')->group(function () {
   Route::post('/logout',[AuthController::class,'logout']);
     // Route pour mettre à jour la quantité de stock d'un seul article
     Route::patch('v1/articles/stock/{id}', [ArticleController::class, 'updateStock']);

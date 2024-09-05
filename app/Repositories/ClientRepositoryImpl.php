@@ -36,7 +36,11 @@ class ClientRepositoryImpl implements ClientRepository
 
     public function findByTelephone($telephone)
     {
-        return Client::where('telephone', $telephone)->first(); //ON DOIT PLUS UTILISER WHERE on doit mettre le where dans scope 
+/*         return Client::where('telephone', $telephone)->first(); 
+ */        //ON DOIT PLUS UTILISER WHERE on doit mettre le where dans scope 
+
+        return Client::with('user')->where('telephone', $telephone)->first();
+
     }
 
     
@@ -55,9 +59,12 @@ class ClientRepositoryImpl implements ClientRepository
             $user->prenom = '';
             $user->login = $data['user']['login'];
             $user->password = Hash::make($data['user']['password']);
+            $user->active = true;
+            $user->photo = '';
             $user->role_id = 3;
             $user->save();
             $client->user_id = $user->id;
+            
         } else {
             $client->user_id = $authUser->id;
         }
@@ -66,6 +73,8 @@ class ClientRepositoryImpl implements ClientRepository
 
         return $client;
     }
+    // App/Repositories/ClientRepositoryImpl.php
+
 
     public function getById($id)
     {

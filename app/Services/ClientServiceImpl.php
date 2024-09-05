@@ -26,8 +26,18 @@ class ClientServiceImpl implements ClientService
 
     public function findByTelephone($telephone)
     {
-        return ClientRepository::findByTelephone($telephone);
-    }
+        $client = ClientRepository::findByTelephone($telephone);
+    
+        // Assurez-vous que les informations du client incluent les détails de l'utilisateur
+        if ($client && $client->user) {
+            return [
+                'client' => $client,
+                'user' => $client->user,
+                'photo' => $client->user->photo
+            ];
+        }
+    
+        return null;    }
 
     public function createClient($data, $authUser)
     {

@@ -17,6 +17,7 @@ class AuthentificationPassport implements AuthenticationServiceInterface
         
         $user = Auth::user();
         $tokenResult = $user->createToken('Personal Access Token')->accessToken;
+        
 
         return response()->json([
             'status' => 200,
@@ -34,5 +35,4 @@ class AuthentificationPassport implements AuthenticationServiceInterface
             'status' => 200,
             'message' => 'Déconnexion réussie',
         ], 200);
-    }
-}
+    }}
